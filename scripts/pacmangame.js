@@ -127,5 +127,6 @@ module.exports = {
     generatefield: () => {
         game = new Game();
     },
-    cycle: (movedir) => game.movePlayer(movedir)
+    move: (movedir) => game.movePlayer(movedir),
+    cycle: () => game.moveEnemies()
 };

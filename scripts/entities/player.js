@@ -12,58 +12,19 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var entity_1 = require("./entity");
+var log = require('electron-log');
 var animationcounter = 0;
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player(ctx, x, y) {
-        return _super.call(this, ctx, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height, mapconfig_1.config.moveSprites.pacman.right[0]) || this;
+        var _this = _super.call(this, ctx, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height, mapconfig_1.config.moveSprites.pacman.right[0]) || this;
+        _this.animationcounter = 0;
+        return _this;
     }
-    Player.prototype.move = function (direction) {
-        var _this = this;
-        animationcounter %= 2;
-        var dx, dy;
-        switch (direction) {
-            case "up":
-                dx = 0;
-                dy = -mapconfig_1.config.speed;
-                break;
-            case "down":
-                dx = 0;
-                dy = mapconfig_1.config.speed;
-                break;
-            case "left":
-                dx = -mapconfig_1.config.speed;
-                dy = 0;
-                break;
-            case "right":
-                dx = mapconfig_1.config.speed;
-                dy = 0;
-                break;
-        }
-        var newX = dx + this.canvasX;
-        var newY = dy + this.canvasY;
-        var approxX = this.getApproxX(newX);
-        var approxY = this.getApproxY(newY);
-        if (mapconfig_1.isValidMapPlace(approxX, approxY)) {
-            requestAnimationFrame(function () {
-                _this.sprite.onload = function () {
-                    _this.ctx.clearRect(_this.getDestinationX(_this.gridX), _this.getDestinationY(_this.gridY), mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
-                    _this.ctx.drawImage(_this.sprite, _this.getDestinationX(newX), _this.getDestinationY(newY), mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
-                    console.log('this.sprite = ', _this.sprite);
-                };
-                _this.sprite.src = mapconfig_1.config.moveSprites.pacman[direction][animationcounter++];
-            });
-            this.canvasX = newX;
-            this.canvasY = newY;
-            this.gridX = approxX;
-            this.gridY = approxY;
-            console.log('moved');
-        }
-    };
-    Player.prototype.getApproxX = function (x) {
+    Player.getApproxX = function (x) {
         return Math.round(x / mapconfig_1.config.grid.x);
     };
-    Player.prototype.getApproxY = function (y) {
+    Player.getApproxY = function (y) {
         return Math.round(y / mapconfig_1.config.grid.y);
     };
     Player.prototype.getDestinationX = function (x) {
@@ -71,6 +32,13 @@ var Player = /** @class */ (function (_super) {
     };
     Player.prototype.getDestinationY = function (y) {
         return y * mapconfig_1.config.grid.y + mapconfig_1.config.grid.y / 2 - mapconfig_1.config.entities.player.height / 2;
+    };
+    Player.prototype.drawSprite = function (x, y) {
+        this.ctx.drawImage(this.sprite, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
+    };
+    Player.prototype.getMoveSprite = function (dir) {
+        this.animationcounter %= 2;
+        return mapconfig_1.config.moveSprites.pacman[dir][this.animationcounter++];
     };
     Player.prototype.toString = function () {
         return _super.prototype.toString.call(this);

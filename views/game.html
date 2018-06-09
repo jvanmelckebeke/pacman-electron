@@ -24,16 +24,16 @@
             currentWindow.hide();
         }
         if (event.code === 'ArrowUp') {
-            (game.cycle('up'));
+            (game.move('up'));
         }
         if (event.code === 'ArrowDown') {
-            (game.cycle('down'));
+            (game.move('down'));
         }
         if (event.code === 'ArrowLeft') {
-            (game.cycle('left'));
+            (game.move('left'));
         }
         if (event.code === 'ArrowRight') {
-            (game.cycle('right'));
+            (game.move('right'));
         }
     };
 
@@ -45,6 +45,7 @@
         setTimeout(game.unpause(), 3000);
     });
     setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
+    setInterval(() => game.cycle(), 500);
 </script>
 <h1 id="score">
 </h1>

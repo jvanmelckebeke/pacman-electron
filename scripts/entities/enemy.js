@@ -17,6 +17,12 @@ var Enemy = /** @class */ (function (_super) {
     function Enemy(ctx, x, y) {
         return _super.call(this, ctx, x, y, mapconfig_1.config.entities.enemy.width, mapconfig_1.config.entities.enemy.height, mapconfig_1.config.moveSprites.enemy.right) || this;
     }
+    Enemy.prototype.drawSprite = function (x, y) {
+        this.ctx.drawImage(this.sprite, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
+    };
+    Enemy.prototype.getMoveSprite = function (dir) {
+        return mapconfig_1.config.moveSprites.enemy[dir];
+    };
     Enemy.prototype.getDestinationX = function (x) {
         return x * mapconfig_1.config.grid.x + mapconfig_1.config.grid.x / 2 - mapconfig_1.config.entities.enemy.width / 2;
     };

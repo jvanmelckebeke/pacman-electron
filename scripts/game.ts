@@ -1,7 +1,8 @@
 import {config} from "./mapconfig";
 import {Player} from "./entities/player";
-import {Point} from "./entities/Point";
+import {Point} from "./entities/point";
 import {Enemy} from "./entities/enemy";
+import {PathFinding} from "./algorithms/pathfinding";
 
 export class Game {
     private canvas: any;
@@ -9,20 +10,24 @@ export class Game {
     private player: Player;
     private points: Point[];
     private enemies: Enemy[];
+    private pathfinding: PathFinding;
 
     constructor() {
         this.points = [];
         this.enemies = [];
-        this.setup();
-    }
-
-    setup() {
         this.generateMap();
+        this.pathfinding = new PathFinding(config.map);
     }
 
-    movePlayer(movedir){
-        console.log('player: ', this.player);
+    movePlayer(movedir) {
         this.player.move(movedir);
+    }
+
+    moveEnemies() {
+        for (let enemy of this.enemies) {
+            let nextmove = this.pathfinding.determineMove(enemy, this.player);
+            enemy.move(nextmove);
+        }
     }
 
     private generateMap() {
@@ -43,9 +48,12 @@ export class Game {
                 }
                 if (config.map[y][x] === 3) {
                     this.enemies.push(new Enemy(this.ctx, x, y));
+                    setTimeout(() => this.enemies.push(new Enemy(this.ctx, x, y)), 1000);
+                    setTimeout(() => this.enemies.push(new Enemy(this.ctx, x, y)), 3000);
                 }
             }
         }
         this.ctx.stroke();
+        return
     }
 }

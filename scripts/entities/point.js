@@ -26,4 +26,4 @@ var Point = /** @class */ (function (_super) {
     return Point;
 }(entity_1.Entity));
 exports.Point = Point;
-//# sourceMappingURL=Point.js.map
+//# sourceMappingURL=point.js.map

@@ -1,6 +1,15 @@
-import {config} from "../mapconfig";
+import {config, isValidMapPlace} from "../mapconfig";
+import {Player} from "./player";
 
 export class Entity {
+    getMoveSprite(arg0: any): any {
+        throw new Error("Method not implemented.");
+    }
+
+    drawSprite(arg0: any, arg1: any): any {
+        throw new Error("Method not implemented.");
+    }
+
     getDestinationY(arg0: any): any {
         throw new Error("Method not implemented.");
     }
@@ -30,6 +39,51 @@ export class Entity {
         this._gridY = y;
         this._canvasX = this._gridX * config.grid.x;
         this._canvasY = this._gridY * config.grid.y;
+    }
+
+    move(direction: string) {
+        let dx, dy;
+        switch (direction) {
+            case "up":
+                dx = 0;
+                dy = -config.speed;
+                break;
+            case "down":
+                dx = 0;
+                dy = config.speed;
+                break;
+            case "left":
+                dx = -config.speed;
+                dy = 0;
+                break;
+            case "right":
+                dx = config.speed;
+                dy = 0;
+                break;
+        }
+        let newX = dx + this.canvasX;
+        let newY = dy + this.canvasY;
+
+        let approxX = Player.getApproxX(newX);
+        let approxY = Player.getApproxY(newY);
+
+        let oldGridX = this.gridX;
+        let oldGridY = this.gridY;
+
+        if (isValidMapPlace(approxX, approxY)) {
+            requestAnimationFrame(() => {
+                this.sprite.onload = () => {
+                    this.ctx.clearRect((oldGridX * config.grid.x), (oldGridY * config.grid.y),
+                        config.grid.x, config.grid.y);
+                    this.drawSprite(this.getDestinationX(approxX), this.getDestinationY(approxY));
+                };
+                this.sprite.src = this.getMoveSprite(direction);
+            });
+            this.canvasX = newX;
+            this.canvasY = newY;
+            this.gridX = approxX;
+            this.gridY = approxY;
+        }
     }
 
 
