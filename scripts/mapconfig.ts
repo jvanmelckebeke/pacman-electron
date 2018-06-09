@@ -4,10 +4,10 @@ const pwidth = 26, pheight = 30;
 const ewidth = 26, eheight = 26;
 const gridx = 40, gridy = 40;
 
-const basedir = '/home/jari/bitbucket/random-huge/pacman';
+const basedir = '/home/jari/bitbucket/random-huge/pacman/';
 
 function getp(d) {
-    return d;
+    return path.resolve(basedir + d);
 }
 
 const pacmanmove = {

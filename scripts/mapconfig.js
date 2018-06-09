@@ -5,9 +5,9 @@ var movespeed = 10;
 var pwidth = 26, pheight = 30;
 var ewidth = 26, eheight = 26;
 var gridx = 40, gridy = 40;
-var basedir = '/home/jari/bitbucket/random-huge/pacman';
+var basedir = '/home/jari/bitbucket/random-huge/pacman/';
 function getp(d) {
-    return d;
+    return path.resolve(basedir + d);
 }
 var pacmanmove = {
     right: [getp('./assets/PCMove/PCMove-Right-1.png'), getp('./assets/PCMove/PCMove-Right-2.png')],

@@ -1,5 +1,6 @@
 const {app, BrowserWindow} = require('electron');
 const log = require('electron-log');
+const path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let gameWindow;
@@ -11,11 +12,11 @@ function createWindow() {
         {
             width: 700, height: 520,
             autoHideMenuBar: true,
-            frame: true,
+            frame: true
         });
 
     // and load the index.html of the app.
-    gameWindow.loadFile('index.html');
+    gameWindow.loadFile(path.resolve('views/index.html'));
     // Open the DevTools.
     // gameWindow.webContents.openDevTools();
 

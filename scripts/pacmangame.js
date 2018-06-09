@@ -1,4 +1,4 @@
-const Game = require('./src/game').Game;
+const Game = require('./game').Game;
 const log = require('electron-log');
 let game;
 const map = [
@@ -36,7 +36,7 @@ let animationcounter = 0;
 window.grid = map;
 window.gridWidth = map[0].length;
 window.gridHeight = map.length;
-let PathFinder = require('./asearch');
+let PathFinder = require('./algorithms/asearch');
 let pathFinder = PathFinder.PathFinder(map, map[0].length, map.length);
 let helpervar = 0;
 const pacmanmove = {

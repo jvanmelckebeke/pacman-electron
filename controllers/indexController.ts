@@ -1,31 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body class="darkbg-active">
-<h1>PAC MAN</h1>
-<div class="menu">
-    <div>
-        <button class="hidden" id="continuegamebutton">
-            Continue Game
-        </button>
-    </div>
-    <div>
-        <button id="newgamebutton">
-            New game
-        </button>
-    </div>
-    <div>
-        <button id="quitbutton">
-            Quit
-        </button>
-    </div>
-</div>
-</body>
-<script>
+const path = require('path');
+
+export function indexController() {
     const electron = require('electron');
     const console = electron.remote.getGlobal('console');
 
@@ -56,7 +31,7 @@
                 autoHideMenuBar: true,
                 webSecurity: false
             });
-        keep.gameWindow.loadFile('game.html');
+        keep.gameWindow.loadFile(path.resolve('views/game.html'));
         keep.gameWindow.on('close', () => {
             keep.gameWindow = null;
             currentWindow.show();
@@ -82,5 +57,4 @@
             document.getElementById('continuegamebutton').classList.remove('hidden');
         }
     })
-</script>
-</html>
+}

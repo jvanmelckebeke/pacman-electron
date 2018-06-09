@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="../styles/style.css">
+</head>
+<body class="darkbg-active">
+<h1>PAC MAN</h1>
+<div class="menu">
+    <div>
+        <button class="hidden" id="continuegamebutton">
+            Continue Game
+        </button>
+    </div>
+    <div>
+        <button id="newgamebutton">
+            New game
+        </button>
+    </div>
+    <div>
+        <button id="quitbutton">
+            Quit
+        </button>
+    </div>
+</div>
+</body>
+<script>
+    require('../controllers/indexController').indexController();
+</script>
+</html>
