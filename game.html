@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>game!</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="darkbg-active">
+<h1>Game</h1>
+<canvas id="game" width="840" height="880" class="game">
+
+</canvas>
+<script>
+    const electron = require('electron');
+
+    const game = require('./pacmangame');
+    const path = require('path');
+    const BrowserWindow = electron.remote.BrowserWindow;
+
+    let currentWindow = electron.remote.getCurrentWindow();
+    document.onkeydown = (event) => {
+        if (event.key === 'Escape') {
+            console.log('going to menu-window');
+            currentWindow.hide();
+        }
+        if (event.code === 'ArrowUp') {
+            (game.cycle('up'));
+        }
+        if (event.code === 'ArrowDown') {
+            (game.cycle('down'));
+        }
+        if (event.code === 'ArrowLeft') {
+            (game.cycle('left'));
+        }
+        if (event.code === 'ArrowRight') {
+            (game.cycle('right'));
+        }
+    };
+
+    game.generatefield();
+    currentWindow.on('hide', () => {
+        game.pause();
+    });
+    currentWindow.on('show', () => {
+        setTimeout(game.unpause(), 3000);
+    });
+    setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
+</script>
+<h1 id="score">
+</h1>
+</body>
+
+</html>

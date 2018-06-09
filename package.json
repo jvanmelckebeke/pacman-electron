@@ -1,0 +1,13 @@
+{
+  "name": "pacman",
+  "version": "0.0.1",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^2.0.2",
+    "electron-log": "^2.2.14"
+  }
+}

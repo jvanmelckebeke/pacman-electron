@@ -1,0 +1,38 @@
+.darkbg-active *,
+.darkbg-active {
+  color: #ffffff;
+  background-color: #242424;
+  font-family: '3270Medium Nerd Font', serif;
+}
+.menu div {
+  min-width: 100%;
+  align-content: center;
+  text-align: center;
+  margin: auto 0;
+  display: block;
+}
+.menu div button {
+  display: inline-block;
+  padding: 20px 10px;
+  min-width: 500px;
+  min-height: 100px;
+  border: double white thick;
+  font-size: x-large;
+  text-align: center;
+  margin: 20px 10px;
+}
+h1 {
+  text-align: center;
+}
+.hidden {
+  display: none !important;
+}
+p.tiny {
+  font-size: small;
+}
+#game {
+  border: double white thick;
+  text-align: center;
+  margin: 20px 10px;
+}
+/*# sourceMappingURL=style.css.map */

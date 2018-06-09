@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="darkbg-active">
+<h1>PAC MAN</h1>
+<div class="menu">
+    <div>
+        <button class="hidden" id="continuegamebutton">
+            Continue Game
+        </button>
+    </div>
+    <div>
+        <button id="newgamebutton">
+            New game
+        </button>
+    </div>
+    <div>
+        <button id="quitbutton">
+            Quit
+        </button>
+    </div>
+</div>
+</body>
+<script>
+    const electron = require('electron');
+    const console = electron.remote.getGlobal('console');
+
+    const BrowserWindow = electron.remote.BrowserWindow;
+    const currentWindow = electron.remote.getCurrentWindow();
+
+    const newgamebutton = document.getElementById('newgamebutton');
+    const quitbutton = document.getElementById('quitbutton');
+    const continuebutton = document.getElementById('continuegamebutton');
+
+    let keep = {gameWindow: null};
+
+    continuebutton.addEventListener('click', event => {
+        keep.gameWindow.show();
+        keep.gameWindow.requestFullscreen();
+    });
+
+    newgamebutton.addEventListener('click', event => {
+
+        if (keep.gameWindow != null) {
+            keep.gameWindow = null;
+        }
+        currentWindow.hide();
+        keep.gameWindow = new BrowserWindow(
+            {
+                width: 960, height: 540,
+                fullscreen: true,
+                autoHideMenuBar: true,
+                webSecurity: false
+            });
+        keep.gameWindow.loadFile('game.html');
+        keep.gameWindow.on('close', () => {
+            keep.gameWindow = null;
+            currentWindow.show();
+        });
+        keep.gameWindow.on('closed', () => {
+            keep.gameWindow = null;
+            currentWindow.show();
+        });
+        keep.gameWindow.on('hide', () => {
+            currentWindow.show();
+        });
+        keep.gameWindow.show();
+    });
+
+    quitbutton.addEventListener('click', event => {
+        if (keep.gameWindow != null)
+            keep.gameWindow.close();
+        currentWindow.close();
+    });
+
+    currentWindow.on('show', () => {
+        if (keep.gameWindow !== null) {
+            document.getElementById('continuegamebutton').classList.remove('hidden');
+        }
+    })
+</script>
+</html>
