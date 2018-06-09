@@ -7,7 +7,9 @@ var enemy_1 = require("./entities/enemy");
 var pathfinding_1 = require("./algorithms/pathfinding");
 var Game = /** @class */ (function () {
     function Game() {
+        this.vis = [];
         this.points = [];
+        this.score = 0;
         this.enemies = [];
         this.generateMap();
         this.pathfinding = new pathfinding_1.PathFinding(mapconfig_1.config.map);
@@ -18,9 +20,50 @@ var Game = /** @class */ (function () {
     Game.prototype.moveEnemies = function () {
         for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
             var enemy = _a[_i];
-            var nextmove = this.pathfinding.determineMove(enemy, this.player);
-            enemy.move(nextmove);
+            var nextmove = void 0;
+            if (enemy.prevmove) {
+                nextmove = enemy.prevmove;
+            }
+            else {
+                nextmove = this.pathfinding.determineMove(enemy, this.player);
+            }
+            if (enemy.move(nextmove)) {
+                enemy.prevmove = nextmove;
+            }
+            else {
+                enemy.prevmove = this.pathfinding.determineMove(enemy, this.player);
+            }
         }
+    };
+    Game.prototype.evaluateGameOver = function () {
+        var px = this.player.gridX, py = this.player.gridY;
+        for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
+            var enemy = _a[_i];
+            if (enemy.gridX == px && enemy.gridY == py) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Game.prototype.editScore = function () {
+        var px = this.player.gridX, py = this.player.gridY;
+        if (this.checked(px, py))
+            return;
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var point = _a[_i];
+            if (point.gridX == px && point.gridY == py) {
+                this.score++;
+                break;
+            }
+        }
+    };
+    Game.prototype.checked = function (x, y) {
+        for (var _i = 0, _a = this.vis; _i < _a.length; _i++) {
+            var xy = _a[_i];
+            if (xy.x == x && xy.y == y)
+                return true;
+        }
+        this.vis.push({ x: x, y: y });
     };
     Game.prototype.generateMap = function () {
         var _this = this;

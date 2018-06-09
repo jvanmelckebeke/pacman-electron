@@ -67,7 +67,9 @@ var Entity = /** @class */ (function () {
             this.canvasY = newY;
             this.gridX = approxX;
             this.gridY = approxY;
+            return true;
         }
+        return false;
     };
     Object.defineProperty(Entity.prototype, "ctx", {
         get: function () {

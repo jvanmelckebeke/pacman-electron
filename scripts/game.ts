@@ -11,9 +11,14 @@ export class Game {
     private points: Point[];
     private enemies: Enemy[];
     private pathfinding: PathFinding;
+    private vis: { x: number, y: number }[];
+
+    score: number;
 
     constructor() {
+        this.vis = [];
         this.points = [];
+        this.score = 0;
         this.enemies = [];
         this.generateMap();
         this.pathfinding = new PathFinding(config.map);
@@ -25,9 +30,46 @@ export class Game {
 
     moveEnemies() {
         for (let enemy of this.enemies) {
-            let nextmove = this.pathfinding.determineMove(enemy, this.player);
-            enemy.move(nextmove);
+            let nextmove;
+            if (enemy.prevmove) {
+                nextmove = enemy.prevmove;
+            } else {
+                nextmove = this.pathfinding.determineMove(enemy, this.player);
+            }
+            if (enemy.move(nextmove)) {
+                enemy.prevmove = nextmove;
+            } else {
+                enemy.prevmove = this.pathfinding.determineMove(enemy, this.player);
+            }
         }
+    }
+
+    evaluateGameOver(){
+        let px = this.player.gridX, py = this.player.gridY;
+        for (let enemy of this.enemies) {
+            if (enemy.gridX == px && enemy.gridY == py) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    editScore() {
+        let px = this.player.gridX, py = this.player.gridY;
+        if (this.checked(px, py)) return;
+        for (let point of this.points) {
+            if (point.gridX == px && point.gridY == py) {
+                this.score++;
+                break;
+            }
+        }
+    }
+
+    private checked(x: number, y: number) {
+        for (let xy of this.vis) {
+            if (xy.x == x && xy.y == y) return true;
+        }
+        this.vis.push({x: x, y: y});
     }
 
     private generateMap() {

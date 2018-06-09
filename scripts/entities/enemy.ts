@@ -2,6 +2,7 @@ import {Entity} from "./entity";
 import {config} from "../mapconfig";
 
 export class Enemy extends Entity {
+    prevmove: string;
     constructor(ctx, x, y) {
         super(ctx, x, y, config.entities.enemy.width, config.entities.enemy.height, config.moveSprites.enemy.right);
     }

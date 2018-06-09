@@ -83,7 +83,9 @@ export class Entity {
             this.canvasY = newY;
             this.gridX = approxX;
             this.gridY = approxY;
+            return true;
         }
+        return false;
     }
 
 

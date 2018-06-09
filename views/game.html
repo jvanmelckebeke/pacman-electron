@@ -14,7 +14,6 @@
     const electron = require('electron');
 
     const game = require('../scripts/pacmangame');
-    const path = require('path');
     const BrowserWindow = electron.remote.BrowserWindow;
 
     let currentWindow = electron.remote.getCurrentWindow();
@@ -44,8 +43,16 @@
     currentWindow.on('show', () => {
         setTimeout(game.unpause(), 3000);
     });
+
+    function cycle() {
+        if (game.cycle()) {
+            alert("game over");
+        } else {
+            setTimeout(cycle, 250);
+        }
+    }
     setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
-    setInterval(() => game.cycle(), 500);
+    cycle();
 </script>
 <h1 id="score">
 </h1>

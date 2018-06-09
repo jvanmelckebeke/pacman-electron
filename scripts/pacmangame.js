@@ -119,7 +119,7 @@ function findpathtopacman(currx, curry, callback) {
 
 module.exports = {
     points: points,
-    score: () => currscore,
+    score: () => game.score,
     pause: () => {
     },
     unpause: () => {
@@ -127,6 +127,13 @@ module.exports = {
     generatefield: () => {
         game = new Game();
     },
-    move: (movedir) => game.movePlayer(movedir),
-    cycle: () => game.moveEnemies()
+    move: (movedir) => {
+        game.movePlayer(movedir);
+
+    },
+    cycle: () => {
+        game.editScore();
+        game.moveEnemies();
+        return (game.evaluateGameOver())
+    }
 };
