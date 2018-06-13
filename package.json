@@ -5,7 +5,9 @@
   "scripts": {
     "start": "electron ."
   },
-  "dependencies": {},
+  "dependencies": {
+    "reinforce-js": "latest"
+  },
   "devDependencies": {
     "electron": "^2.0.2",
     "electron-log": "^2.2.14"

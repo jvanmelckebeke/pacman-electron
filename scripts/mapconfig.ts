@@ -80,5 +80,5 @@ export const config = {
 };
 
 export function isValidMapPlace(x: number, y: number) {
-    return map[y][x] !== 0;
+    return x >= 0 && y >= 0 && x < map[0].length && y < map.length && map[y][x] !== 0;
 }
