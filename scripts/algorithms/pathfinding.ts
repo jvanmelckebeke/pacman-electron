@@ -1,9 +1,13 @@
 import {Enemy} from "../entities/enemy";
 import {Player} from "../entities/player";
-import {DQNSolver, DQNOpt, DQNEnv} from 'reinforce-js';
 import {isValidMapPlace} from "../mapconfig";
 import {calcBFS} from "./graphTraversal";
+import {deepqlearn} from "convnetjs-ts";
+import {Brain} from "convnetjs-ts/lib/deepqlearn";
+import * as log from "electron-log";
+import * as electron from 'electron';
 
+const ipc = electron.ipcRenderer;
 
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -24,36 +28,57 @@ export class PathFinding {
     private movearr = ["up", "down", "left", "right"];
     private moveobj = [{y: 1, x: 0}, {y: -1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
     private MLset: boolean = false;
-    private dqnSolver: DQNSolver;
+    private brain: Brain;
 
     constructor(grid: number[][]) {
         this.grid = grid;
-        this.setupML();
     }
 
-    private setupML() {
-        let env = new DQNEnv(100, 100, this.getNumberOfStates(), 4);
-        let opt = new DQNOpt();
-        opt.setTrainingMode(true);
-        opt.setNumberOfHiddenUnits([100]);  // mind the array here
-        opt.setEpsilonDecay(1.0, 0.1, 1e6);
-        opt.setEpsilon(0.05);
-        opt.setGamma(0.9);
-        opt.setAlpha(0.005);
-        opt.setLossClipping(true);
-        opt.setLossClamp(1.0);
-        opt.setRewardClipping(true);
-        opt.setRewardClamp(1.0);
-        opt.setExperienceSize(1e6);
-        opt.setReplayInterval(5);
-        opt.setReplaySteps(5);
-        this.dqnSolver = new DQNSolver(env, opt);
-        for (let i = 0; i < 1000; i++) {
+    setupML(win) {
+        let numinputs = this.getNumberOfStates();
+        let numactions = 4;
+        let temporal_window = 1; //todo: figure out this magic variable
+        let network_size = numinputs * temporal_window + numactions * temporal_window + numinputs;
+
+
+        let layer_defs = [];
+
+        layer_defs.push({type: 'input', out_sx: 1, out_sy: 1, out_depth: network_size});
+        layer_defs.push({type: 'fc', num_neurons: Math.round(network_size / 4), activation: 'relu'});
+        layer_defs.push({type: 'fc', num_neurons: Math.round(network_size / 16), activation: 'relu'});
+        layer_defs.push({type: 'regression', num_neurons: numactions});
+
+        let tdtrainer_options = {learning_rate: 0.001, momentum: 0.01, batch_size: 64, l2_decay: 0.01};
+
+
+        let opt = {
+            temporal_window: temporal_window,
+            experience_size: 30000,
+            start_learn_threshold: 1e5,
+            gamma: 0.7,
+            learning_steps_total: 1e3,
+            learning_steps_burnin: 3000,
+            epsilon_min: 0.05,
+            epsilon_test_time: 0.05,
+            layer_defs: layer_defs,
+            tdtrainer_options: tdtrainer_options
+        };
+
+        let brain = new deepqlearn.Brain(numinputs, numactions, opt);
+
+        let reward = 0;
+
+        for (let i = 0; i <= 1e5 || reward < 1; i++) {
             let state = this.getRandomState();
-            const action = this.dqnSolver.decide(state);
-            let reward = this.getReward(action, state, this.grid);
-            this.dqnSolver.learn(reward);
+            const action = brain.forward(state);
+            reward = this.getReward(action, state, this.grid);
+            // log.debug(`training epoch ${i} : ${reward}`);
+            if (i % 100 == 0)
+                win.webContents.send('newprogress', i);
+            brain.backward(reward);
         }
+        log.info('TRAINING DONE');
+        this.brain = brain;
         this.MLset = true;
 
     }
@@ -68,9 +93,11 @@ export class PathFinding {
         let ny = ey + dirPred.y;
         if (isValidMapPlace(nx, ny)) {
             //start bfs
-            return calcBFS(ex, ey, px, py, grid) - calcBFS(nx, ny, px, py, grid);
+            let best = calcBFS(ex, ey, px, py, grid), pred = calcBFS(nx, ny, px, py, grid);
+            // log.info('best:', best, ' ; predicted: ', pred);
+            return best - pred;
         }
-        return -100;
+        return -1;
     }
 
     private getNumberOfStates() {
@@ -91,7 +118,10 @@ export class PathFinding {
 
     private calcmove(enemy: Enemy, player: Player) {
         // todo: make this better
-        return this.dqnSolver.decide([player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid)))
+        let state = [player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid));
+        let action = this.brain.forward(state);
+        this.brain.backward(this.getReward(action, state, this.grid));
+        return action;
     }
 }
 

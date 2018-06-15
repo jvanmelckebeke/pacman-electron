@@ -3,18 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require('path');
 function indexController() {
     var electron = require('electron');
-    var console = electron.remote.getGlobal('console');
     var BrowserWindow = electron.remote.BrowserWindow;
     var currentWindow = electron.remote.getCurrentWindow();
     var newgamebutton = document.getElementById('newgamebutton');
     var quitbutton = document.getElementById('quitbutton');
     var continuebutton = document.getElementById('continuegamebutton');
     var keep = { gameWindow: null };
-    continuebutton.addEventListener('click', function (event) {
+    continuebutton.addEventListener('click', function () {
         keep.gameWindow.show();
         keep.gameWindow.requestFullscreen();
     });
-    newgamebutton.addEventListener('click', function (event) {
+    newgamebutton.addEventListener('click', function () {
         if (keep.gameWindow != null) {
             keep.gameWindow = null;
         }
@@ -23,7 +22,6 @@ function indexController() {
             width: 960, height: 540,
             fullscreen: true,
             autoHideMenuBar: true,
-            webSecurity: false
         });
         keep.gameWindow.loadFile(path.resolve('views/game.html'));
         keep.gameWindow.on('close', function () {
@@ -39,7 +37,7 @@ function indexController() {
         });
         keep.gameWindow.show();
     });
-    quitbutton.addEventListener('click', function (event) {
+    quitbutton.addEventListener('click', function () {
         if (keep.gameWindow != null)
             keep.gameWindow.close();
         currentWindow.close();

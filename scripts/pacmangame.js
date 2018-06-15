@@ -135,5 +135,6 @@ module.exports = {
         game.editScore();
         game.moveEnemies();
         return (game.evaluateGameOver())
-    }
+    },
+    trainAI: (win) => {game.trainAI(win)}
 };

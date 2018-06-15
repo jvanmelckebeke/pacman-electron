@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var entity_1 = require("./entity");
-var Point = /** @class */ (function (_super) {
+var Point = (function (_super) {
     __extends(Point, _super);
     function Point(ctx, x, y) {
         return _super.call(this, ctx, x, y, mapconfig_1.config.entities.point.width, mapconfig_1.config.entities.point.height, mapconfig_1.config.sprites.point) || this;

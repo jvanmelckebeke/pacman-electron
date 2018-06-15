@@ -22,6 +22,9 @@ const enemymove = {
     down: getp('./assets/ENMove/Enemy-Down.png'),
     left: getp('./assets/ENMove/Enemy-Left.png'),
 };
+export function clone(obj) {
+    return JSON.parse(JSON.stringify(obj))
+}
 
 const map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

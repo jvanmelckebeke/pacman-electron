@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var player_1 = require("./player");
-var Entity = /** @class */ (function () {
+var Entity = (function () {
     function Entity(ctx, x, y, width, height, src) {
         var _this = this;
         this._ctx = ctx;

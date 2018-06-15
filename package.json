@@ -6,7 +6,7 @@
     "start": "electron ."
   },
   "dependencies": {
-    "reinforce-js": "latest"
+    "convnetjs-ts": "^0.0.9"
   },
   "devDependencies": {
     "electron": "^2.0.2",

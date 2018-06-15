@@ -2,7 +2,6 @@ const path = require('path');
 
 export function indexController() {
     const electron = require('electron');
-    const console = electron.remote.getGlobal('console');
 
     const BrowserWindow = electron.remote.BrowserWindow;
     const currentWindow = electron.remote.getCurrentWindow();
@@ -13,12 +12,12 @@ export function indexController() {
 
     let keep = {gameWindow: null};
 
-    continuebutton.addEventListener('click', event => {
+    continuebutton.addEventListener('click', () => {
         keep.gameWindow.show();
         keep.gameWindow.requestFullscreen();
     });
 
-    newgamebutton.addEventListener('click', event => {
+    newgamebutton.addEventListener('click', () => {
 
         if (keep.gameWindow != null) {
             keep.gameWindow = null;
@@ -29,7 +28,6 @@ export function indexController() {
                 width: 960, height: 540,
                 fullscreen: true,
                 autoHideMenuBar: true,
-                webSecurity: false
             });
         keep.gameWindow.loadFile(path.resolve('views/game.html'));
         keep.gameWindow.on('close', () => {
@@ -46,7 +44,7 @@ export function indexController() {
         keep.gameWindow.show();
     });
 
-    quitbutton.addEventListener('click', event => {
+    quitbutton.addEventListener('click', () => {
         if (keep.gameWindow != null)
             keep.gameWindow.close();
         currentWindow.close();

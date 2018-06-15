@@ -11,54 +11,7 @@
 
 </canvas>
 <script>
-    let pause = false;
-    const electron = require('electron');
-
-    const game = require('../scripts/pacmangame');
-    const BrowserWindow = electron.remote.BrowserWindow;
-
-    let currentWindow = electron.remote.getCurrentWindow();
-    document.onkeydown = (event) => {
-        if (event.key === 'Escape') {
-            console.log('going to menu-window');
-            currentWindow.hide();
-        }
-        if (event.code === 'ArrowUp') {
-            (game.move('up'));
-        }
-        if (event.code === 'ArrowDown') {
-            (game.move('down'));
-        }
-        if (event.code === 'ArrowLeft') {
-            (game.move('left'));
-        }
-        if (event.code === 'ArrowRight') {
-            (game.move('right'));
-        }
-    };
-
-    game.generatefield();
-    currentWindow.on('hide', () => {
-        pause = true;
-    });
-    currentWindow.on('show', () => {
-        setTimeout(() => {
-            pause = false;
-            cycle();
-        }, 3000);
-    });
-
-    function cycle() {
-        if (pause) return;
-        if (game.cycle()) {
-            alert("game over");
-        } else {
-            setTimeout(cycle, 250);
-        }
-    }
-
-    setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
-    cycle();
+    require('../controllers/gameController').gameController();
 </script>
 <h1 id="score">
 </h1>

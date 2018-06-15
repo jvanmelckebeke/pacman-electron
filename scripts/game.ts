@@ -13,12 +13,19 @@ export class Game {
     private pathfinding: PathFinding;
     private vis: { x: number, y: number }[];
 
-    score: number;
+    private _score: number;
+    get score(): number {
+        return this._score;
+    }
+
+    set score(value: number) {
+        this._score = value;
+    }
 
     constructor() {
         this.vis = [];
         this.points = [];
-        this.score = 0;
+        this._score = 0;
         this.enemies = [];
         this.generateMap();
         this.pathfinding = new PathFinding(config.map);
@@ -44,7 +51,11 @@ export class Game {
         }
     }
 
-    evaluateGameOver(){
+    trainAI(win) {
+        this.pathfinding.setupML(win);
+    }
+
+    evaluateGameOver() {
         let px = this.player.gridX, py = this.player.gridY;
         for (let enemy of this.enemies) {
             if (enemy.gridX == px && enemy.gridY == py) {
@@ -59,7 +70,7 @@ export class Game {
         if (this.checked(px, py)) return;
         for (let point of this.points) {
             if (point.gridX == px && point.gridY == py) {
-                this.score++;
+                this._score++;
                 break;
             }
         }
@@ -98,4 +109,6 @@ export class Game {
         this.ctx.stroke();
         return
     }
+
+
 }

@@ -1,31 +1,10 @@
 const {app, BrowserWindow} = require('electron');
 const log = require('electron-log');
-const tf = require("@tensorflow/tfjs");
 
 const path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let gameWindow;
-test();
-function test() {
-
-
-    const model = tf.sequential();
-    model.add(tf.layers.dense({units: 1, inputShape: [1]}));
-
-// Prepare the model for training: Specify the loss and the optimizer.
-    model.compile({loss: 'meanSquaredError', optimizer: 'sgd'});
-
-// Generate some synthetic data for training.
-    const xs = tf.tensor2d([1, 2, 3, 4], [4, 1]);
-    const ys = tf.tensor2d([2, 4, 6, 8], [4, 1]);
-
-// Train the model using the data.
-    model.fit(xs, ys, {epochs: 10}).then(() => {
-        // Use the model to do inference on a data point the model hasn't seen before:
-        model.predict(tf.tensor2d([2], [1, 1])).print();
-    });
-}
 
 function trainmodel() {
     let xslist = [];

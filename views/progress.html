@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loading game</title>
+    <link rel="stylesheet" type="text/css" href="../styles/style.css">
+</head>
+<body class="darkbg-active">
+<div id="progressbar" class="middle">
+    <div id="progresstext"></div>
+</div>
+<script>
+    const ProgressController = require('../controllers/progressController').ProgressController;
+    let controller = new ProgressController();
+    controller.update();
+</script>
+</body>
+</html>

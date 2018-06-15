@@ -14,7 +14,7 @@ var mapconfig_1 = require("../mapconfig");
 var entity_1 = require("./entity");
 var log = require('electron-log');
 var animationcounter = 0;
-var Player = /** @class */ (function (_super) {
+var Player = (function (_super) {
     __extends(Player, _super);
     function Player(ctx, x, y) {
         var _this = _super.call(this, ctx, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height, mapconfig_1.config.moveSprites.pacman.right[0]) || this;

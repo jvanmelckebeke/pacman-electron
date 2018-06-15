@@ -1,8 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var reinforce_js_1 = require("reinforce-js");
 var mapconfig_1 = require("../mapconfig");
 var graphTraversal_1 = require("./graphTraversal");
+var convnetjs_ts_1 = require("convnetjs-ts");
+var log = require("electron-log");
+var electron = require("electron");
+var ipc = electron.ipcRenderer;
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -16,37 +19,48 @@ function getRandomValidXYs(grid) {
             return [px, py, ex, ey];
     }
 }
-var PathFinding = /** @class */ (function () {
+var PathFinding = (function () {
     function PathFinding(grid) {
         this.movearr = ["up", "down", "left", "right"];
         this.moveobj = [{ y: 1, x: 0 }, { y: -1, x: 0 }, { y: 0, x: -1 }, { y: 0, x: 1 }];
         this.MLset = false;
         this.grid = grid;
-        this.setupML();
     }
-    PathFinding.prototype.setupML = function () {
-        var env = new reinforce_js_1.DQNEnv(100, 100, this.getNumberOfStates(), 4);
-        var opt = new reinforce_js_1.DQNOpt();
-        opt.setTrainingMode(true);
-        opt.setNumberOfHiddenUnits([100]); // mind the array here
-        opt.setEpsilonDecay(1.0, 0.1, 1e6);
-        opt.setEpsilon(0.05);
-        opt.setGamma(0.9);
-        opt.setAlpha(0.005);
-        opt.setLossClipping(true);
-        opt.setLossClamp(1.0);
-        opt.setRewardClipping(true);
-        opt.setRewardClamp(1.0);
-        opt.setExperienceSize(1e6);
-        opt.setReplayInterval(5);
-        opt.setReplaySteps(5);
-        this.dqnSolver = new reinforce_js_1.DQNSolver(env, opt);
-        for (var i = 0; i < 1000; i++) {
+    PathFinding.prototype.setupML = function (win) {
+        var numinputs = this.getNumberOfStates();
+        var numactions = 4;
+        var temporal_window = 1;
+        var network_size = numinputs * temporal_window + numactions * temporal_window + numinputs;
+        var layer_defs = [];
+        layer_defs.push({ type: 'input', out_sx: 1, out_sy: 1, out_depth: network_size });
+        layer_defs.push({ type: 'fc', num_neurons: Math.round(network_size / 4), activation: 'relu' });
+        layer_defs.push({ type: 'fc', num_neurons: Math.round(network_size / 16), activation: 'relu' });
+        layer_defs.push({ type: 'regression', num_neurons: numactions });
+        var tdtrainer_options = { learning_rate: 0.001, momentum: 0.01, batch_size: 64, l2_decay: 0.01 };
+        var opt = {
+            temporal_window: temporal_window,
+            experience_size: 30000,
+            start_learn_threshold: 1e5,
+            gamma: 0.7,
+            learning_steps_total: 1e3,
+            learning_steps_burnin: 3000,
+            epsilon_min: 0.05,
+            epsilon_test_time: 0.05,
+            layer_defs: layer_defs,
+            tdtrainer_options: tdtrainer_options
+        };
+        var brain = new convnetjs_ts_1.deepqlearn.Brain(numinputs, numactions, opt);
+        var reward = 0;
+        for (var i = 0; i <= 1e5 || reward < 1; i++) {
             var state = this.getRandomState();
-            var action = this.dqnSolver.decide(state);
-            var reward = this.getReward(action, state, this.grid);
-            this.dqnSolver.learn(reward);
+            var action = brain.forward(state);
+            reward = this.getReward(action, state, this.grid);
+            if (i % 100 == 0)
+                win.webContents.send('newprogress', i);
+            brain.backward(reward);
         }
+        log.info('TRAINING DONE');
+        this.brain = brain;
         this.MLset = true;
     };
     PathFinding.prototype.getReward = function (action, state, grid) {
@@ -58,10 +72,10 @@ var PathFinding = /** @class */ (function () {
         var nx = ex + dirPred.x;
         var ny = ey + dirPred.y;
         if (mapconfig_1.isValidMapPlace(nx, ny)) {
-            //start bfs
-            return graphTraversal_1.calcBFS(ex, ey, px, py, grid) - graphTraversal_1.calcBFS(nx, ny, px, py, grid);
+            var best = graphTraversal_1.calcBFS(ex, ey, px, py, grid), pred = graphTraversal_1.calcBFS(nx, ny, px, py, grid);
+            return best - pred;
         }
-        return -100;
+        return -1;
     };
     PathFinding.prototype.getNumberOfStates = function () {
         return 4 + this.grid.length * this.grid[0].length;
@@ -77,8 +91,10 @@ var PathFinding = /** @class */ (function () {
         }
     };
     PathFinding.prototype.calcmove = function (enemy, player) {
-        // todo: make this better
-        return this.dqnSolver.decide([player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid)));
+        var state = [player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid));
+        var action = this.brain.forward(state);
+        this.brain.backward(this.getReward(action, state, this.grid));
+        return action;
     };
     return PathFinding;
 }());

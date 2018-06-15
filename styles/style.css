@@ -35,4 +35,26 @@ p.tiny {
   text-align: center;
   margin: 20px 10px;
 }
+.middle {
+  align-content: center;
+  text-align: center;
+  margin: auto 0;
+  display: block;
+}
+#progressbar {
+  background-color: #242424;
+  border: thick double white;
+  padding: 3px;
+  width: 550px;
+}
+#progressbar > div {
+  background-color: #ffffff;
+  display: block;
+  width: 0;
+  /* Adjust with JavaScript */
+  height: 50px;
+}
+#progresstext {
+  width: 550px;
+}
 /*# sourceMappingURL=style.css.map */

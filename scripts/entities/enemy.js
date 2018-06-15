@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var entity_1 = require("./entity");
 var mapconfig_1 = require("../mapconfig");
-var Enemy = /** @class */ (function (_super) {
+var Enemy = (function (_super) {
     __extends(Enemy, _super);
     function Enemy(ctx, x, y) {
         return _super.call(this, ctx, x, y, mapconfig_1.config.entities.enemy.width, mapconfig_1.config.entities.enemy.height, mapconfig_1.config.moveSprites.enemy.right) || this;

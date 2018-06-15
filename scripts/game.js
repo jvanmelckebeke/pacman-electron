@@ -5,15 +5,25 @@ var player_1 = require("./entities/player");
 var point_1 = require("./entities/point");
 var enemy_1 = require("./entities/enemy");
 var pathfinding_1 = require("./algorithms/pathfinding");
-var Game = /** @class */ (function () {
+var Game = (function () {
     function Game() {
         this.vis = [];
         this.points = [];
-        this.score = 0;
+        this._score = 0;
         this.enemies = [];
         this.generateMap();
         this.pathfinding = new pathfinding_1.PathFinding(mapconfig_1.config.map);
     }
+    Object.defineProperty(Game.prototype, "score", {
+        get: function () {
+            return this._score;
+        },
+        set: function (value) {
+            this._score = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Game.prototype.movePlayer = function (movedir) {
         this.player.move(movedir);
     };
@@ -35,6 +45,9 @@ var Game = /** @class */ (function () {
             }
         }
     };
+    Game.prototype.trainAI = function (win) {
+        this.pathfinding.setupML(win);
+    };
     Game.prototype.evaluateGameOver = function () {
         var px = this.player.gridX, py = this.player.gridY;
         for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
@@ -52,7 +65,7 @@ var Game = /** @class */ (function () {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var point = _a[_i];
             if (point.gridX == px && point.gridY == py) {
-                this.score++;
+                this._score++;
                 break;
             }
         }

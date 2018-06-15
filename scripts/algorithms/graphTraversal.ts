@@ -1,5 +1,5 @@
-import {isValidMapPlace} from "../mapconfig";
-
+import {clone, isValidMapPlace} from "../mapconfig";
+import * as log from 'electron-log';
 let used = [];
 
 function notUsed(t: { x: number; y: number, val: number }) {
@@ -16,19 +16,21 @@ export function calcBFS(sx: number, sy: number, tx: number, ty: number, grid: nu
     let queue = [{x: sx, y: sy, val: 0}];
     let dxdy = [{y: 1, x: 0}, {y: -1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
     while (queue.length > 0) {
-        let t = queue.shift();
+        // log.info('queue', queue);
+        let t = queue[0];
+        queue.splice(0,1);
         if (t.x === tx && t.y == ty) {
             return t.val;
         }
         for (let xy of dxdy) {
-
-            t.x += xy.x;
-            t.y += xy.y;
-            t.val++;
-            if (isValidMapPlace(t.x, t.y) && notUsed(t)) {
-                queue.push(t);
+            let c = clone(t);
+            c.x += xy.x;
+            c.y += xy.y;
+            c.val++;
+            if (isValidMapPlace(c.x, c.y) && notUsed(c)) {
+                queue.push(c);
             }
         }
     }
-    return 1;
+    return -10;
 }
