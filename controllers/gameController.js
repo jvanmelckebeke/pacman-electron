@@ -1,28 +1,24 @@
-import * as path from "path";
-
-
-export function gameController() {
-    let AItrained = false;
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var path = require("path");
+function gameController() {
+    var AItrained = false;
     function trainAI() {
-        const electron = require('electron');
-
-        const BrowserWindow = electron.remote.BrowserWindow;
-
-        let progressWindow = new BrowserWindow({
+        var electron = require('electron');
+        var BrowserWindow = electron.remote.BrowserWindow;
+        var progressWindow = new BrowserWindow({
             width: 600, height: 100,
             fullscreen: false,
             autoHideMenuBar: true,
             frame: false
         });
-
         progressWindow.loadFile(path.resolve('views/progress.html'));
-        progressWindow.on('close', () => {
+        progressWindow.on('close', function () {
             progressWindow = null;
             AItrained = true;
             cycle();
         });
-        progressWindow.on('closed', () => {
+        progressWindow.on('closed', function () {
             progressWindow = null;
             AItrained = true;
             cycle();
@@ -31,16 +27,12 @@ export function gameController() {
         progressWindow.show();
         game.trainAI(progressWindow);
     }
-
-    let pause = false;
-
-    const electron = require('electron');
-
-    const game = require('../scripts/pacmangame');
-    const BrowserWindow = electron.remote.BrowserWindow;
-
-    let currentWindow = electron.remote.getCurrentWindow();
-    document.onkeydown = (event) => {
+    var pause = false;
+    var electron = require('electron');
+    var game = require('../scripts/pacmangame');
+    var BrowserWindow = electron.remote.BrowserWindow;
+    var currentWindow = electron.remote.getCurrentWindow();
+    document.onkeydown = function (event) {
         if (event.key === 'Escape') {
             console.log('going to menu-window');
             currentWindow.hide();
@@ -58,29 +50,29 @@ export function gameController() {
             (game.move('right'));
         }
     };
-
     game.generatefield();
-
     if (!AItrained)
         trainAI();
-
     function cycle() {
-        if (pause) return;
+        if (pause)
+            return;
         if (game.cycle()) {
             alert("game over");
-        } else {
+        }
+        else {
             setTimeout(cycle, 250);
         }
     }
-
-    setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
-    currentWindow.on('hide', () => {
+    setInterval(function () { return document.getElementById('score').innerText = "Score: " + game.score(); }, 500);
+    currentWindow.on('hide', function () {
         pause = true;
     });
-    currentWindow.on('show', () => {
-        setTimeout(() => {
+    currentWindow.on('show', function () {
+        setTimeout(function () {
             pause = false;
             cycle();
         }, 3000);
     });
 }
+exports.gameController = gameController;
+//# sourceMappingURL=gameController.js.map

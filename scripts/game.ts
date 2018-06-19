@@ -38,16 +38,8 @@ export class Game {
     moveEnemies() {
         for (let enemy of this.enemies) {
             let nextmove;
-            if (enemy.prevmove) {
-                nextmove = enemy.prevmove;
-            } else {
-                nextmove = this.pathfinding.determineMove(enemy, this.player);
-            }
-            if (enemy.move(nextmove)) {
-                enemy.prevmove = nextmove;
-            } else {
-                enemy.prevmove = this.pathfinding.determineMove(enemy, this.player);
-            }
+            nextmove = this.pathfinding.determineMove(enemy, this.player);
+            enemy.move(nextmove);
         }
     }
 

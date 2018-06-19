@@ -8,21 +8,39 @@
 <body class="darkbg-active">
 <h1>PAC MAN</h1>
 <div class="menu">
-    <div>
-        <button class="hidden" id="continuegamebutton">
-            Continue Game
-        </button>
-    </div>
-    <div>
-        <button id="newgamebutton">
-            New game
-        </button>
-    </div>
-    <div>
-        <button id="quitbutton">
-            Quit
-        </button>
-    </div>
+    <table>
+        <tr class="single">
+            <td colspan="3">
+                <button class="hidden" id="continuegamebutton">
+                    Continue Game
+                </button>
+            </td>
+        </tr>
+        <tr class="columns">
+            <td>
+                <button id="newgamebutton">
+                    Classic
+                </button>
+            </td>
+            <td>
+                <button id="newMLgamebutton">
+                    ML
+                </button>
+            </td>
+            <td>
+                <button id="newAutogamebutton">
+                    Auto
+                </button>
+            </td>
+        </tr>
+        <tr class="single" >
+            <td colspan="3">
+                <button id="quitbutton">
+                    Quit
+                </button>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 <script>

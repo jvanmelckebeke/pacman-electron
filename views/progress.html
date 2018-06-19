@@ -6,8 +6,14 @@
     <link rel="stylesheet" type="text/css" href="../styles/style.css">
 </head>
 <body class="darkbg-active">
+
 <div id="progressbar" class="middle">
-    <div id="progresstext"></div>
+    <table>
+        <tr>
+            <td id="progresstext"></td>
+            <td id="accuracytext"></td>
+        </tr>
+    </table>
 </div>
 <script>
     const ProgressController = require('../controllers/progressController').ProgressController;

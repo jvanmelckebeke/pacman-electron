@@ -31,18 +31,8 @@ var Game = (function () {
         for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
             var enemy = _a[_i];
             var nextmove = void 0;
-            if (enemy.prevmove) {
-                nextmove = enemy.prevmove;
-            }
-            else {
-                nextmove = this.pathfinding.determineMove(enemy, this.player);
-            }
-            if (enemy.move(nextmove)) {
-                enemy.prevmove = nextmove;
-            }
-            else {
-                enemy.prevmove = this.pathfinding.determineMove(enemy, this.player);
-            }
+            nextmove = this.pathfinding.determineMove(enemy, this.player);
+            enemy.move(nextmove);
         }
     };
     Game.prototype.trainAI = function (win) {

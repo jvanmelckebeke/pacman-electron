@@ -1,6 +1,6 @@
 import * as electron from 'electron';
 import * as log from "electron-log";
-import {BrowserWindow}  from 'electron';
+import {BrowserWindow} from 'electron';
 
 const ipcRenderer = electron.ipcRenderer;
 
@@ -9,14 +9,25 @@ export class ProgressController {
 
     private _progress: number;
     private currentwindow: BrowserWindow;
+    private _accuracy: number;
+
+    get accuracy(): number {
+        return this._accuracy;
+    }
+
+    set accuracy(value: number) {
+        this._accuracy = value;
+    }
 
     constructor() {
-        this.maxprogress = 1e5;
+        this.maxprogress = 100;
         this._progress = 0;
+        this._accuracy = 0;
         this.currentwindow = electron.remote.getCurrentWindow();
         this.update();
-        ipcRenderer.on('newprogress', (event, progress) => {
+        ipcRenderer.on('newprogress', (event, progress, accuracy) => {
             // log.info('progress: ', progress);
+            this.accuracy = Math.round(accuracy * 10) / 10;
             this.progress = progress;
             this.update();
         });
@@ -24,14 +35,10 @@ export class ProgressController {
 
     update() {
         let t = document.getElementById('progresstext');
-        t.innerText = `epoch ${this.progress} of ${this.maxprogress}`;
-        let perc = Math.floor(this.progress / this.maxprogress * 100);
-        // log.info(`epoch ${this.progress} of ${this.maxprogress} = ${perc}%`);
-        let prog = document.getElementById('progressbar');
-        if (perc > 0) {
-            prog.style.width = `${perc}%`;
-        }
-        if (perc == 100){
+        let acc = document.getElementById('accuracytext');
+        t.innerText = `epoch ${this.progress}`;
+        acc.innerText = `accuracity: ${this._accuracy}%`;
+        if (this._accuracy > 90) {
             this.currentwindow.close();
         }
     }
