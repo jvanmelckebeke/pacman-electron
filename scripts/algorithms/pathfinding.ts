@@ -26,7 +26,7 @@ function getRandomValidXYs(grid: number[][]) {
 export class PathFinding {
     private grid: number[][];
     private movearr = ["up", "down", "left", "right"];
-    private moveobj = [{y: 1, x: 0}, {y: -1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
+    private moveobj = [{y: -1, x: 0}, {y: 1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
     private MLset: boolean = false;
     private brain: Brain;
 
@@ -106,9 +106,9 @@ export class PathFinding {
         let ny = ey + dirPred.y;
         if (isValidMapPlace(nx, ny)) {
             //start bfs
-            let best = calcBFS(ex, ey, px, py, grid), pred = calcBFS(nx, ny, px, py, grid);
+            let best = calcBFS(ex, ey, px, py), pred = calcBFS(nx, ny, px, py);
             // log.info('best:', best, ' ; predicted: ', pred);
-            return (best - pred < 0) ? 0 : 1;
+            return (best - 1 === pred) ? 1 : 0;
         }
         return 0;
     }
@@ -126,17 +126,10 @@ export class PathFinding {
         return this.getCorrectAction(state);
     }
 
-    private calcmove(enemy: Enemy, player: Player) {
-        // todo: make this better
-        let state = [player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid));
-        let action = this.brain.forward(state);
-        this.brain.backward(this.getReward(action, state, this.grid));
-        return action;
-    }
-
     private getCorrectAction(state: number[]) {
         for (let i = 0; i < 4; i++) {
             if (this.getReward(i, state, this.grid) === 1) {
+                // log.info(`enemy (${state[2]}, ${state[3]}): best move: ${this.movearr[i]}`);
                 return this.movearr[i];
             }
         }

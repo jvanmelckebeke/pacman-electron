@@ -20,7 +20,7 @@ function getRandomValidXYs(grid) {
 var PathFinding = (function () {
     function PathFinding(grid) {
         this.movearr = ["up", "down", "left", "right"];
-        this.moveobj = [{ y: 1, x: 0 }, { y: -1, x: 0 }, { y: 0, x: -1 }, { y: 0, x: 1 }];
+        this.moveobj = [{ y: -1, x: 0 }, { y: 1, x: 0 }, { y: 0, x: -1 }, { y: 0, x: 1 }];
         this.MLset = false;
         this.grid = grid;
     }
@@ -37,8 +37,8 @@ var PathFinding = (function () {
         var nx = ex + dirPred.x;
         var ny = ey + dirPred.y;
         if (mapconfig_1.isValidMapPlace(nx, ny)) {
-            var best = graphTraversal_1.calcBFS(ex, ey, px, py, grid), pred = graphTraversal_1.calcBFS(nx, ny, px, py, grid);
-            return (best - pred < 0) ? 0 : 1;
+            var best = graphTraversal_1.calcBFS(ex, ey, px, py), pred = graphTraversal_1.calcBFS(nx, ny, px, py);
+            return (best - 1 === pred) ? 1 : 0;
         }
         return 0;
     };
@@ -51,12 +51,6 @@ var PathFinding = (function () {
     PathFinding.prototype.determineMove = function (enemy, player) {
         var state = [player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid));
         return this.getCorrectAction(state);
-    };
-    PathFinding.prototype.calcmove = function (enemy, player) {
-        var state = [player.gridX, player.gridY, enemy.gridX, enemy.gridY].concat([].concat.apply([], this.grid));
-        var action = this.brain.forward(state);
-        this.brain.backward(this.getReward(action, state, this.grid));
-        return action;
     };
     PathFinding.prototype.getCorrectAction = function (state) {
         for (var i = 0; i < 4; i++) {

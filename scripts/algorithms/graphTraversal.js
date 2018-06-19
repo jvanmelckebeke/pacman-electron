@@ -11,7 +11,7 @@ function notUsed(t) {
     used.push(t);
     return true;
 }
-function calcBFS(sx, sy, tx, ty, grid) {
+function calcBFS(sx, sy, tx, ty) {
     used = [];
     var queue = [{ x: sx, y: sy, val: 0 }];
     var dxdy = [{ y: 1, x: 0 }, { y: -1, x: 0 }, { y: 0, x: -1 }, { y: 0, x: 1 }];

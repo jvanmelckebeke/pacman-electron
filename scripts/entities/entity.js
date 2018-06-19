@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var player_1 = require("./player");
+var log = require("electron-log");
 var Entity = (function () {
     function Entity(ctx, x, y, width, height, src) {
         var _this = this;
@@ -69,6 +70,7 @@ var Entity = (function () {
             this.gridY = approxY;
             return true;
         }
+        log.info('not a valid place');
         return false;
     };
     Object.defineProperty(Entity.prototype, "ctx", {

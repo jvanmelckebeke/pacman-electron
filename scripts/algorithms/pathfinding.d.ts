@@ -12,6 +12,5 @@ export declare class PathFinding {
     private getNumberOfStates();
     private getRandomState();
     determineMove(enemy: Enemy, player: Player): string;
-    private calcmove(enemy, player);
     private getCorrectAction(state);
 }

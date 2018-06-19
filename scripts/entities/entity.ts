@@ -1,5 +1,6 @@
 import {config, isValidMapPlace} from "../mapconfig";
 import {Player} from "./player";
+import * as log from "electron-log";
 
 export class Entity {
     getMoveSprite(arg0: any): any {
@@ -85,6 +86,7 @@ export class Entity {
             this.gridY = approxY;
             return true;
         }
+        log.info('not a valid place');
         return false;
     }
 

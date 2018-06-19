@@ -11,7 +11,7 @@ function notUsed(t: { x: number; y: number, val: number }) {
     return true;
 }
 
-export function calcBFS(sx: number, sy: number, tx: number, ty: number, grid: number[][]): number {
+export function calcBFS(sx: number, sy: number, tx: number, ty: number): number {
     used = [];
     let queue = [{x: sx, y: sy, val: 0}];
     let dxdy = [{y: 1, x: 0}, {y: -1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
