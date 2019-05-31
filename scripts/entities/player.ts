@@ -1,5 +1,6 @@
 import {config, isValidMapPlace} from "../mapconfig";
 import {Entity} from "./entity";
+import {XY} from "../tools";
 
 const log = require('electron-log');
 let animationcounter = 0;
@@ -11,12 +12,21 @@ export class Player extends Entity {
         super(ctx, x, y, config.entities.player.width, config.entities.player.height, config.moveSprites.pacman.right[0]);
     }
 
-    static getApproxX(x: number) {
+    static getApproxXY(xy: XY) {
+        return new XY(Player.getApproxX(xy.x), Player.getApproxY(xy.y))
+    }
+
+    private static getApproxX(x: number) {
         return Math.round(x / config.grid.x);
     }
 
-    static getApproxY(y: number) {
+    private static getApproxY(y: number) {
         return Math.round(y / config.grid.y);
+    }
+
+    drawSprite(x, y) {
+        this.ctx.drawImage(this.sprite, x, y,
+            config.entities.player.width, config.entities.player.height);
     }
 
     getDestinationX(x: number) {
@@ -25,11 +35,6 @@ export class Player extends Entity {
 
     getDestinationY(y: number) {
         return y * config.grid.y + config.grid.y / 2 - config.entities.player.height / 2;
-    }
-
-    drawSprite(x, y) {
-        this.ctx.drawImage(this.sprite, x, y,
-            config.entities.player.width, config.entities.player.height);
     }
 
     getMoveSprite(dir) {

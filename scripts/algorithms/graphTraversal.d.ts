@@ -1,1 +1,2 @@
-export declare function calcBFS(sx: number, sy: number, tx: number, ty: number): number;
+import { XY } from "../tools";
+export declare function calcBFS(sxy: XY, txy: XY): number;

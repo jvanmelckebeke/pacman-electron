@@ -5,10 +5,40 @@ import {BrowserWindow} from 'electron';
 const ipcRenderer = electron.ipcRenderer;
 
 export class ProgressController {
-    maxprogress: number; // todo
+
+    private currentwindow: BrowserWindow;
+
+    constructor() {
+        this._streak = 0;
+        this._progress = 0;
+        this._accuracy = 0;
+        this.currentwindow = electron.remote.getCurrentWindow();
+        this.update();
+        ipcRenderer.on('newprogress', (event, progress, accuracy, streak) => {
+            log.info('progress: ', progress);
+            this.accuracy = Math.round(accuracy * 10) / 10;
+            this.streak = streak;
+            this.progress = progress;
+            this.update();
+        });
+        document.onkeydown = (event) => {
+            if (event.key === 'Escape') {
+                console.log('going to menu-window');
+                this.currentwindow.close();
+            }
+        };
+    }
 
     private _progress: number;
-    private currentwindow: BrowserWindow;
+
+    get progress(): number {
+        return this._progress;
+    }
+
+    set progress(value: number) {
+        this._progress = value;
+    }
+
     private _accuracy: number;
 
     get accuracy(): number {
@@ -19,36 +49,25 @@ export class ProgressController {
         this._accuracy = value;
     }
 
-    constructor() {
-        this.maxprogress = 100;
-        this._progress = 0;
-        this._accuracy = 0;
-        this.currentwindow = electron.remote.getCurrentWindow();
-        this.update();
-        ipcRenderer.on('newprogress', (event, progress, accuracy) => {
-            // log.info('progress: ', progress);
-            this.accuracy = Math.round(accuracy * 10) / 10;
-            this.progress = progress;
-            this.update();
-        });
+    private _streak: number;
+
+    get streak(): number {
+        return this._streak;
+    }
+
+    set streak(value: number) {
+        this._streak = value;
     }
 
     update() {
-        let t = document.getElementById('progresstext');
-        let acc = document.getElementById('accuracytext');
-        t.innerText = `epoch ${this.progress}`;
-        acc.innerText = `accuracity: ${this._accuracy}%`;
-        if (this._accuracy > 90) {
+        let epochtext = document.getElementById('progresstext');
+        let accuracytext = document.getElementById('accuracytext');
+        let streaktext = document.getElementById('streaktext');
+        epochtext.innerText = `epoch ${this.progress}`;
+        accuracytext.innerText = `accuracity: ${this.accuracy}%`;
+        streaktext.innerText = `streak: ${this.streak}`;
+        if (this._accuracy > 90 && this.streak >= 10) {
             this.currentwindow.close();
         }
-    }
-
-
-    get progress(): number {
-        return this._progress;
-    }
-
-    set progress(value: number) {
-        this._progress = value;
     }
 }

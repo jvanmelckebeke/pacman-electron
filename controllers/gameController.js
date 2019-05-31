@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
+var log = require("electron-log");
+var electron = require("electron");
 function gameController() {
     var AItrained = false;
+    var pause = false;
     function trainAI() {
-        var electron = require('electron');
         var BrowserWindow = electron.remote.BrowserWindow;
         var progressWindow = new BrowserWindow({
             width: 600, height: 100,
@@ -23,18 +25,15 @@ function gameController() {
             AItrained = true;
             cycle();
         });
-        cycle();
         progressWindow.show();
         game.trainAI(progressWindow);
     }
-    var pause = false;
-    var electron = require('electron');
     var game = require('../scripts/pacmangame');
     var BrowserWindow = electron.remote.BrowserWindow;
     var currentWindow = electron.remote.getCurrentWindow();
     document.onkeydown = function (event) {
         if (event.key === 'Escape') {
-            console.log('going to menu-window');
+            log.info('going to menu-window');
             currentWindow.hide();
         }
         if (event.code === 'ArrowUp') {
@@ -63,7 +62,9 @@ function gameController() {
             setTimeout(cycle, 250);
         }
     }
-    setInterval(function () { return document.getElementById('score').innerText = "Score: " + game.score(); }, 500);
+    setInterval(function () {
+        return document.getElementById('score').innerText = "Score: " + game.score();
+    }, 500);
     currentWindow.on('hide', function () {
         pause = true;
     });

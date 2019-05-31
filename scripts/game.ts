@@ -2,16 +2,18 @@ import {config} from "./mapconfig";
 import {Player} from "./entities/player";
 import {Point} from "./entities/point";
 import {Enemy} from "./entities/enemy";
-import {PathFinding} from "./algorithms/pathfinding";
+import {XY} from "./tools";
+import * as log from "electron-log";
+import {PathfindingHard} from "./algorithms/pathfinding/pathfindingHard";
 
 export class Game {
     private canvas: any;
     private ctx: CanvasRenderingContext2D;
     private player: Player;
-    private points: Point[];
-    private enemies: Enemy[];
-    private pathfinding: PathFinding;
-    private vis: { x: number, y: number }[];
+    private readonly points: Point[];
+    private readonly enemies: Enemy[];
+    private pathfinding: PathfindingHard;
+    private readonly vis: XY[];
 
     private _score: number;
     get score(): number {
@@ -25,10 +27,12 @@ export class Game {
     constructor() {
         this.vis = [];
         this.points = [];
-        this._score = 0;
+        this.score = 0;
         this.enemies = [];
+
         this.generateMap();
-        this.pathfinding = new PathFinding(config.map);
+
+        this.pathfinding = new PathfindingHard(config.map);
     }
 
     movePlayer(movedir) {
@@ -44,13 +48,13 @@ export class Game {
     }
 
     trainAI(win) {
-        this.pathfinding.setupML(win);
+        this.pathfinding.setup(win);
     }
 
     evaluateGameOver() {
-        let px = this.player.gridX, py = this.player.gridY;
+        let pxy = this.player.gridXY;
         for (let enemy of this.enemies) {
-            if (enemy.gridX == px && enemy.gridY == py) {
+            if (enemy.gridXY == pxy) {
                 return true;
             }
         }
@@ -58,21 +62,21 @@ export class Game {
     }
 
     editScore() {
-        let px = this.player.gridX, py = this.player.gridY;
-        if (this.checked(px, py)) return;
+        let pxy = this.player.gridXY;
+        if (this.checked(pxy)) return;
         for (let point of this.points) {
-            if (point.gridX == px && point.gridY == py) {
+            if (point.gridXY == pxy) {
                 this._score++;
                 break;
             }
         }
     }
 
-    private checked(x: number, y: number) {
+    private checked(o: XY) {
         for (let xy of this.vis) {
-            if (xy.x == x && xy.y == y) return true;
+            if (o == xy) return true;
         }
-        this.vis.push({x: x, y: y});
+        this.vis.push(o);
     }
 
     private generateMap() {
@@ -99,7 +103,6 @@ export class Game {
             }
         }
         this.ctx.stroke();
-        return
     }
 
 

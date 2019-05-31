@@ -49,7 +49,7 @@ p.tiny {
   margin: auto 0;
   display: block;
 }
-#progressbar {
+#progressbar > table {
   background-color: #242424;
   border: thick double white;
   padding: 3px;
@@ -58,11 +58,6 @@ p.tiny {
 #progressbar > div {
   background-color: #ffffff;
   display: block;
-  width: 0;
-  /* Adjust with JavaScript */
   height: 50px;
-}
-#progresstext {
-  width: 550px;
 }
 /*# sourceMappingURL=style.css.map */

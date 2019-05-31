@@ -20,14 +20,14 @@ var Enemy = (function (_super) {
     Enemy.prototype.drawSprite = function (x, y) {
         this.ctx.drawImage(this.sprite, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
     };
-    Enemy.prototype.getMoveSprite = function (dir) {
-        return mapconfig_1.config.moveSprites.enemy[dir];
-    };
     Enemy.prototype.getDestinationX = function (x) {
         return x * mapconfig_1.config.grid.x + mapconfig_1.config.grid.x / 2 - mapconfig_1.config.entities.enemy.width / 2;
     };
     Enemy.prototype.getDestinationY = function (y) {
         return y * mapconfig_1.config.grid.y + mapconfig_1.config.grid.y / 2 - mapconfig_1.config.entities.enemy.height / 2;
+    };
+    Enemy.prototype.getMoveSprite = function (dir) {
+        return mapconfig_1.config.moveSprites.enemy[dir];
     };
     return Enemy;
 }(entity_1.Entity));

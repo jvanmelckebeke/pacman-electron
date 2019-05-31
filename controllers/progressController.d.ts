@@ -1,10 +1,11 @@
 export declare class ProgressController {
-    maxprogress: number;
-    private _progress;
     private currentwindow;
+    constructor();
+    private _progress;
+    progress: number;
     private _accuracy;
     accuracy: number;
-    constructor();
+    private _streak;
+    streak: number;
     update(): void;
-    progress: number;
 }

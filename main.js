@@ -2,7 +2,7 @@ const {app, BrowserWindow} = require('electron');
 const log = require('electron-log');
 
 const path = require('path');
-// Keep a global reference of the window object, if you don't, the window will
+// Keep a global reference of the window object, if you don'value, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let gameWindow;
 
@@ -31,7 +31,7 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        gameWindow = null
+        gameWindow = null;
     });
 
 }

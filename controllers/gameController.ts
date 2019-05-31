@@ -1,12 +1,12 @@
 import * as path from "path";
-
+import * as log from "electron-log";
+import * as electron from 'electron';
 
 export function gameController() {
     let AItrained = false;
+    let pause = false;
 
     function trainAI() {
-        const electron = require('electron');
-
         const BrowserWindow = electron.remote.BrowserWindow;
 
         let progressWindow = new BrowserWindow({
@@ -27,14 +27,10 @@ export function gameController() {
             AItrained = true;
             cycle();
         });
-        cycle();
         progressWindow.show();
         game.trainAI(progressWindow);
     }
 
-    let pause = false;
-
-    const electron = require('electron');
 
     const game = require('../scripts/pacmangame');
     const BrowserWindow = electron.remote.BrowserWindow;
@@ -42,7 +38,7 @@ export function gameController() {
     let currentWindow = electron.remote.getCurrentWindow();
     document.onkeydown = (event) => {
         if (event.key === 'Escape') {
-            console.log('going to menu-window');
+            log.info('going to menu-window');
             currentWindow.hide();
         }
         if (event.code === 'ArrowUp') {
@@ -73,7 +69,9 @@ export function gameController() {
         }
     }
 
-    setInterval(() => document.getElementById('score').innerText = `Score: ${game.score()}`, 500);
+    setInterval(() => {
+        return document.getElementById('score').innerText = `Score: ${game.score()}`;
+    }, 500);
     currentWindow.on('hide', () => {
         pause = true;
     });

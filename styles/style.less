@@ -64,9 +64,10 @@ p.tiny {
   display: block;
 }
 
-#progressbar {
+#progressbar > table {
   background-color: @bgcolor;
   border: thick double white;
+
   padding: 3px;
   width: 550px;
 }
@@ -74,10 +75,5 @@ p.tiny {
 #progressbar > div {
   background-color: @color;
   display: block;
-  width: 0; /* Adjust with JavaScript */
   height: 50px;
-}
-
-#progresstext {
-  width: 550px;
 }

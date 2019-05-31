@@ -1,8 +1,76 @@
 import {config, isValidMapPlace} from "../mapconfig";
 import {Player} from "./player";
 import * as log from "electron-log";
+import {XY} from "../tools";
 
 export class Entity {
+    constructor(ctx: CanvasRenderingContext2D, x, y, width, height, src) {
+        this._ctx = ctx;
+
+        this._sprite = new Image();
+        this._sprite.src = src;
+
+        this._sprite.onload = () =>
+            ctx.drawImage(this._sprite, this.getDestinationX(x), this.getDestinationY(y),
+                width, height);
+        this._gridXY = new XY(x, y);
+        this._canvasXY = new XY(this.gridXY.x, this.gridXY.y).multiply(config.grid.x, config.grid.y);
+    }
+
+    private _gridXY: XY;
+
+    get gridXY(): XY {
+        return this._gridXY;
+    }
+
+    set gridXY(value: XY) {
+        this._gridXY = value;
+    }
+
+    private _canvasXY: XY;
+
+    get canvasXY(): XY {
+        return this._canvasXY;
+    }
+
+    set canvasXY(value: XY) {
+        this._canvasXY = value;
+    }
+
+    private _ctx: CanvasRenderingContext2D;
+
+    get ctx(): CanvasRenderingContext2D {
+        return this._ctx;
+    }
+
+    set ctx(value: CanvasRenderingContext2D) {
+        this._ctx = value;
+    }
+
+    private _sprite;
+
+    get sprite() {
+        return this._sprite;
+    }
+
+    set sprite(value) {
+        this._sprite = value;
+    }
+
+    private static getDirection(direction: string) {
+        switch (direction) {
+            case "up":
+                return new XY(0, -config.speed);
+            case "down":
+                return new XY(0, config.speed);
+            case "left":
+                return new XY(-config.speed, 0);
+            case "right":
+                return new XY(config.speed, 0);
+        }
+        return new XY(0, 0);
+    }
+
     getMoveSprite(arg0: any): any {
         throw new Error("Method not implemented.");
     }
@@ -19,124 +87,29 @@ export class Entity {
         throw new Error("Method not implemented.");
     }
 
-    private _ctx: CanvasRenderingContext2D;
-    private _sprite;
-    private _gridX: number;
-    private _gridY: number;
-    private _canvasX: number;
-    private _canvasY: number;
-
-    constructor(ctx: CanvasRenderingContext2D, x, y, width, height, src) {
-        this._ctx = ctx;
-
-        this._sprite = new Image();
-        this._sprite.src = src;
-
-        this._sprite.onload = () =>
-            ctx.drawImage(this._sprite, this.getDestinationX(x), this.getDestinationY(y),
-                width, height);
-
-        this._gridX = x;
-        this._gridY = y;
-        this._canvasX = this._gridX * config.grid.x;
-        this._canvasY = this._gridY * config.grid.y;
-    }
-
     move(direction: string) {
-        let dx, dy;
-        switch (direction) {
-            case "up":
-                dx = 0;
-                dy = -config.speed;
-                break;
-            case "down":
-                dx = 0;
-                dy = config.speed;
-                break;
-            case "left":
-                dx = -config.speed;
-                dy = 0;
-                break;
-            case "right":
-                dx = config.speed;
-                dy = 0;
-                break;
-        }
-        let newX = dx + this.canvasX;
-        let newY = dy + this.canvasY;
+        let dxdy = Entity.getDirection(direction);
 
-        let approxX = Player.getApproxX(newX);
-        let approxY = Player.getApproxY(newY);
+        let newXY = this.canvasXY.add(dxdy);
+        let approxXY = Player.getApproxXY(newXY);
 
-        let oldGridX = this.gridX;
-        let oldGridY = this.gridY;
+        let oldGridXY = this.gridXY;
 
-        if (isValidMapPlace(approxX, approxY)) {
+        if (isValidMapPlace(approxXY)) {
             requestAnimationFrame(() => {
                 this.sprite.onload = () => {
-                    this.ctx.clearRect((oldGridX * config.grid.x), (oldGridY * config.grid.y),
-                        config.grid.x, config.grid.y);
-                    this.drawSprite(this.getDestinationX(approxX), this.getDestinationY(approxY));
+                    let newGridXY = oldGridXY.multiply(config.grid.x, config.grid.y);
+                    this.ctx.clearRect(newGridXY.x, newGridXY.y, config.grid.x, config.grid.y);
+                    this.drawSprite(this.getDestinationX(approxXY.x), this.getDestinationY(approxXY.y));
                 };
                 this.sprite.src = this.getMoveSprite(direction);
             });
-            this.canvasX = newX;
-            this.canvasY = newY;
-            this.gridX = approxX;
-            this.gridY = approxY;
+            this.canvasXY = newXY;
+            this.gridXY = approxXY;
             return true;
         }
         log.info('not a valid place');
         return false;
-    }
-
-
-    get ctx(): CanvasRenderingContext2D {
-        return this._ctx;
-    }
-
-    set ctx(value: CanvasRenderingContext2D) {
-        this._ctx = value;
-    }
-
-    get sprite() {
-        return this._sprite;
-    }
-
-    set sprite(value) {
-        this._sprite = value;
-    }
-
-    get gridX(): number {
-        return this._gridX;
-    }
-
-    set gridX(value: number) {
-        this._gridX = value;
-    }
-
-    get gridY(): number {
-        return this._gridY;
-    }
-
-    set gridY(value: number) {
-        this._gridY = value;
-    }
-
-    get canvasX(): number {
-        return this._canvasX;
-    }
-
-    set canvasX(value: number) {
-        this._canvasX = value;
-    }
-
-    get canvasY(): number {
-        return this._canvasY;
-    }
-
-    set canvasY(value: number) {
-        this._canvasY = value;
     }
 
     toString() {

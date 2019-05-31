@@ -78,8 +78,8 @@ exports.config = {
         point: getp('./assets/pacdot.png')
     }
 };
-function isValidMapPlace(x, y) {
-    return x >= 0 && y >= 0 && x < map[0].length && y < map.length && map[y][x] != 0;
+function isValidMapPlace(xy) {
+    return xy.x >= 0 && xy.y >= 0 && xy.x < map[0].length && xy.y < map.length && map[xy.y][xy.x] != 0;
 }
 exports.isValidMapPlace = isValidMapPlace;
 //# sourceMappingURL=mapconfig.js.map

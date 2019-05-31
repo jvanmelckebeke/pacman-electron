@@ -1,3 +1,4 @@
+import { XY } from "./tools";
 export declare function clone(obj: any): any;
 export declare const config: {
     moveSprites: {
@@ -38,4 +39,4 @@ export declare const config: {
         point: any;
     };
 };
-export declare function isValidMapPlace(x: number, y: number): boolean;
+export declare function isValidMapPlace(xy: XY): boolean;

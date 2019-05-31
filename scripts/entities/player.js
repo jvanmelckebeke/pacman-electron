@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var entity_1 = require("./entity");
+var tools_1 = require("../tools");
 var log = require('electron-log');
 var animationcounter = 0;
 var Player = (function (_super) {
@@ -21,20 +22,23 @@ var Player = (function (_super) {
         _this.animationcounter = 0;
         return _this;
     }
+    Player.getApproxXY = function (xy) {
+        return new tools_1.XY(Player.getApproxX(xy.x), Player.getApproxY(xy.y));
+    };
     Player.getApproxX = function (x) {
         return Math.round(x / mapconfig_1.config.grid.x);
     };
     Player.getApproxY = function (y) {
         return Math.round(y / mapconfig_1.config.grid.y);
     };
+    Player.prototype.drawSprite = function (x, y) {
+        this.ctx.drawImage(this.sprite, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
+    };
     Player.prototype.getDestinationX = function (x) {
         return x * mapconfig_1.config.grid.x + mapconfig_1.config.grid.x / 2 - mapconfig_1.config.entities.player.width / 2;
     };
     Player.prototype.getDestinationY = function (y) {
         return y * mapconfig_1.config.grid.y + mapconfig_1.config.grid.y / 2 - mapconfig_1.config.entities.player.height / 2;
-    };
-    Player.prototype.drawSprite = function (x, y) {
-        this.ctx.drawImage(this.sprite, x, y, mapconfig_1.config.entities.player.width, mapconfig_1.config.entities.player.height);
     };
     Player.prototype.getMoveSprite = function (dir) {
         this.animationcounter %= 2;

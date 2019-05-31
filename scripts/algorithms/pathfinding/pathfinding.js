@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var mapconfig_1 = require("../../mapconfig");
+var graphTraversal_1 = require("../graphTraversal");
 var electron = require("electron");
-var tools_1 = require("../tools");
+var tools_1 = require("../../tools");
 var ipc = electron.ipcRenderer;
-var rewardpos = 50, rewardneg = -30;
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -22,8 +23,41 @@ var PathFinding = (function () {
         this._movearr = ["up", "down", "left", "right"];
         this._moveobj = tools_1.getDirectionArray();
         this._MLset = false;
+        this._posreward = 10;
+        this._negreward = -5;
+        this._ctereward = 0.1;
         this._grid = grid;
     }
+    Object.defineProperty(PathFinding.prototype, "posreward", {
+        get: function () {
+            return this._posreward;
+        },
+        set: function (value) {
+            this._posreward = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PathFinding.prototype, "negreward", {
+        get: function () {
+            return this._negreward;
+        },
+        set: function (value) {
+            this._negreward = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PathFinding.prototype, "ctereward", {
+        get: function () {
+            return this._ctereward;
+        },
+        set: function (value) {
+            this._ctereward = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(PathFinding.prototype, "grid", {
         get: function () {
             return this._grid;
@@ -74,6 +108,17 @@ var PathFinding = (function () {
         enumerable: true,
         configurable: true
     });
+    PathFinding.prototype.isCorrectDirection = function (action, state) {
+        var dirPred = this.moveobj[action];
+        var pxy = new tools_1.XY(state[0], state[1]);
+        var exy = new tools_1.XY(state[2], state[3]);
+        var nxy = exy.tAdd(dirPred);
+        if (mapconfig_1.isValidMapPlace(nxy)) {
+            var best = graphTraversal_1.calcBFS(exy, pxy), pred = graphTraversal_1.calcBFS(exy, pxy);
+            return (best - 1 >= pred);
+        }
+        return false;
+    };
     return PathFinding;
 }());
 exports.PathFinding = PathFinding;

@@ -1,33 +1,32 @@
 import {clone, isValidMapPlace} from "../mapconfig";
 import * as log from 'electron-log';
+import {getDirectionArray, XY, XYT} from "../tools";
+
 let used = [];
 
-function notUsed(t: { x: number; y: number, val: number }) {
+function notUsed(t: XYT) {
     for (let v of used) {
-        if (v.x === t.x && v.y === t.y)
+        if (v.isXY(t))
             return false;
     }
     used.push(t);
     return true;
 }
 
-export function calcBFS(sx: number, sy: number, tx: number, ty: number): number {
+export function calcBFS(sxy: XY, txy: XY): number {
     used = [];
-    let queue = [{x: sx, y: sy, val: 0}];
-    let dxdy = [{y: 1, x: 0}, {y: -1, x: 0}, {y: 0, x: -1}, {y: 0, x: 1}];
+    let queue = [new XYT(sxy.x, sxy.y, 0)];
+    let dxdy = getDirectionArray();
     while (queue.length > 0) {
-        // log.info('queue', queue);
         let t = queue[0];
-        queue.splice(0,1);
-        if (t.x === tx && t.y == ty) {
-            return t.val;
+        queue.splice(0, 1);
+        if (txy.isXY(t)) {
+            return t.value;
         }
         for (let xy of dxdy) {
-            let c = clone(t);
-            c.x += xy.x;
-            c.y += xy.y;
-            c.val++;
-            if (isValidMapPlace(c.x, c.y) && notUsed(c)) {
+            let c = new XYT(t.x, t.y, t.value).addNumbers(xy.x, xy.y);
+            c.value++;
+            if (isValidMapPlace(c) && notUsed(c)) {
                 queue.push(c);
             }
         }

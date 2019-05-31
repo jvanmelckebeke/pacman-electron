@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mapconfig_1 = require("../mapconfig");
 var player_1 = require("./player");
 var log = require("electron-log");
+var tools_1 = require("../tools");
 var Entity = (function () {
     function Entity(ctx, x, y, width, height, src) {
         var _this = this;
@@ -12,67 +13,29 @@ var Entity = (function () {
         this._sprite.onload = function () {
             return ctx.drawImage(_this._sprite, _this.getDestinationX(x), _this.getDestinationY(y), width, height);
         };
-        this._gridX = x;
-        this._gridY = y;
-        this._canvasX = this._gridX * mapconfig_1.config.grid.x;
-        this._canvasY = this._gridY * mapconfig_1.config.grid.y;
+        this._gridXY = new tools_1.XY(x, y);
+        this._canvasXY = new tools_1.XY(this.gridXY.x, this.gridXY.y).multiply(mapconfig_1.config.grid.x, mapconfig_1.config.grid.y);
     }
-    Entity.prototype.getMoveSprite = function (arg0) {
-        throw new Error("Method not implemented.");
-    };
-    Entity.prototype.drawSprite = function (arg0, arg1) {
-        throw new Error("Method not implemented.");
-    };
-    Entity.prototype.getDestinationY = function (arg0) {
-        throw new Error("Method not implemented.");
-    };
-    Entity.prototype.getDestinationX = function (arg0) {
-        throw new Error("Method not implemented.");
-    };
-    Entity.prototype.move = function (direction) {
-        var _this = this;
-        var dx, dy;
-        switch (direction) {
-            case "up":
-                dx = 0;
-                dy = -mapconfig_1.config.speed;
-                break;
-            case "down":
-                dx = 0;
-                dy = mapconfig_1.config.speed;
-                break;
-            case "left":
-                dx = -mapconfig_1.config.speed;
-                dy = 0;
-                break;
-            case "right":
-                dx = mapconfig_1.config.speed;
-                dy = 0;
-                break;
-        }
-        var newX = dx + this.canvasX;
-        var newY = dy + this.canvasY;
-        var approxX = player_1.Player.getApproxX(newX);
-        var approxY = player_1.Player.getApproxY(newY);
-        var oldGridX = this.gridX;
-        var oldGridY = this.gridY;
-        if (mapconfig_1.isValidMapPlace(approxX, approxY)) {
-            requestAnimationFrame(function () {
-                _this.sprite.onload = function () {
-                    _this.ctx.clearRect((oldGridX * mapconfig_1.config.grid.x), (oldGridY * mapconfig_1.config.grid.y), mapconfig_1.config.grid.x, mapconfig_1.config.grid.y);
-                    _this.drawSprite(_this.getDestinationX(approxX), _this.getDestinationY(approxY));
-                };
-                _this.sprite.src = _this.getMoveSprite(direction);
-            });
-            this.canvasX = newX;
-            this.canvasY = newY;
-            this.gridX = approxX;
-            this.gridY = approxY;
-            return true;
-        }
-        log.info('not a valid place');
-        return false;
-    };
+    Object.defineProperty(Entity.prototype, "gridXY", {
+        get: function () {
+            return this._gridXY;
+        },
+        set: function (value) {
+            this._gridXY = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Entity.prototype, "canvasXY", {
+        get: function () {
+            return this._canvasXY;
+        },
+        set: function (value) {
+            this._canvasXY = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Entity.prototype, "ctx", {
         get: function () {
             return this._ctx;
@@ -93,46 +56,53 @@ var Entity = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Entity.prototype, "gridX", {
-        get: function () {
-            return this._gridX;
-        },
-        set: function (value) {
-            this._gridX = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Entity.prototype, "gridY", {
-        get: function () {
-            return this._gridY;
-        },
-        set: function (value) {
-            this._gridY = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Entity.prototype, "canvasX", {
-        get: function () {
-            return this._canvasX;
-        },
-        set: function (value) {
-            this._canvasX = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Entity.prototype, "canvasY", {
-        get: function () {
-            return this._canvasY;
-        },
-        set: function (value) {
-            this._canvasY = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    Entity.getDirection = function (direction) {
+        switch (direction) {
+            case "up":
+                return new tools_1.XY(0, -mapconfig_1.config.speed);
+            case "down":
+                return new tools_1.XY(0, mapconfig_1.config.speed);
+            case "left":
+                return new tools_1.XY(-mapconfig_1.config.speed, 0);
+            case "right":
+                return new tools_1.XY(mapconfig_1.config.speed, 0);
+        }
+        return new tools_1.XY(0, 0);
+    };
+    Entity.prototype.getMoveSprite = function (arg0) {
+        throw new Error("Method not implemented.");
+    };
+    Entity.prototype.drawSprite = function (arg0, arg1) {
+        throw new Error("Method not implemented.");
+    };
+    Entity.prototype.getDestinationY = function (arg0) {
+        throw new Error("Method not implemented.");
+    };
+    Entity.prototype.getDestinationX = function (arg0) {
+        throw new Error("Method not implemented.");
+    };
+    Entity.prototype.move = function (direction) {
+        var _this = this;
+        var dxdy = Entity.getDirection(direction);
+        var newXY = this.canvasXY.add(dxdy);
+        var approxXY = player_1.Player.getApproxXY(newXY);
+        var oldGridXY = this.gridXY;
+        if (mapconfig_1.isValidMapPlace(approxXY)) {
+            requestAnimationFrame(function () {
+                _this.sprite.onload = function () {
+                    var newGridXY = oldGridXY.multiply(mapconfig_1.config.grid.x, mapconfig_1.config.grid.y);
+                    _this.ctx.clearRect(newGridXY.x, newGridXY.y, mapconfig_1.config.grid.x, mapconfig_1.config.grid.y);
+                    _this.drawSprite(_this.getDestinationX(approxXY.x), _this.getDestinationY(approxXY.y));
+                };
+                _this.sprite.src = _this.getMoveSprite(direction);
+            });
+            this.canvasXY = newXY;
+            this.gridXY = approxXY;
+            return true;
+        }
+        log.info('not a valid place');
+        return false;
+    };
     Entity.prototype.toString = function () {
         return JSON.stringify(this);
     };

@@ -1,3 +1,5 @@
+import {XY} from "./tools";
+
 const path = require('path');
 const movespeed = 10;
 const pwidth = 26, pheight = 30;
@@ -82,6 +84,6 @@ export const config = {
     }
 };
 
-export function isValidMapPlace(x: number, y: number) {
-    return x >= 0 && y >= 0 && x < map[0].length && y < map.length && map[y][x] != 0;
+export function isValidMapPlace(xy: XY) {
+    return xy.x >= 0 && xy.y >= 0 && xy.x < map[0].length && xy.y < map.length && map[xy.y][xy.x] != 0;
 }
